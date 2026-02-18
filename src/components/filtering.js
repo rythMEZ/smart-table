@@ -22,7 +22,7 @@ export function initFiltering(elements, indexes) {
     });
 
   return (data, state, action) => {
-    // @todo: #4.2 — обработать очистку поля
+    // @todo: #4.2 [DONE] — обработать очистку поля
     document.addEventListener("click", (e) => {
       const button = e.target.closest('[name="clear"]');
 
