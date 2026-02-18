@@ -1,14 +1,43 @@
-import {createComparison, defaultRules} from "../lib/compare.js";
+import { createComparison, defaultRules } from "../lib/compare.js";
 
-// @todo: #4.3 — настроить компаратор
+// @todo: #4.3 [DONE] — настроить компаратор
+const compare = createComparison(defaultRules);
 
 export function initFiltering(elements, indexes) {
-    // @todo: #4.1 — заполнить выпадающие списки опциями
+  // @todo: #4.1 [DONE] — заполнить выпадающие списки опциями
+  Object.keys(indexes) // Получаем ключи из объекта
+    .forEach((elementName) => {
+      // Перебираем по именам
+      elements[elementName].append(
+        // в каждый элемент добавляем опции
+        ...Object.values(indexes[elementName]) // формируем массив имён, значений опций
+          .map((name) => {
+            const option = document.createElement("option");
+            option.value = name;
+            const optionText = document.createTextNode(name);
+            option.append(optionText);
+            return option;
+          }),
+      );
+    });
 
-    return (data, state, action) => {
-        // @todo: #4.2 — обработать очистку поля
+  return (data, state, action) => {
+    // @todo: #4.2 — обработать очистку поля
+    document.addEventListener("click", (e) => {
+      const button = e.target.closest('[name="clear"]');
 
-        // @todo: #4.5 — отфильтровать данные используя компаратор
-        return data;
-    }
+      if (!button) return;
+
+      const parent = button.parentElement;
+      const input = parent.querySelector("input");
+
+      if (!input) return;
+      input.value = "";
+      const fieldName = input.name;
+      state[fieldName] = "";
+    });
+
+    // @todo: #4.5 [DONE] — отфильтровать данные используя компаратор
+    return data.filter((row) => compare(row, state));
+  };
 }
